@@ -13,7 +13,7 @@ class Tester {
 
 public:
     static void testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests);
-    static void testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm);
+    static void testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output);
 };
 
 

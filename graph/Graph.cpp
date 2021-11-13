@@ -52,9 +52,8 @@ void Graph::printGraph(){
 
 void Graph::loadGraph(const std::string& fileName){
     std::ifstream myFile;
-    myFile.open(fileName);
+    myFile.open("C:/Users/kacpe/PEA/data/" + fileName);
     if(myFile.good()){
-        std::cout << "file is good\n\n";
         std::string data;
         std::getline(myFile, data);
         this->fileName = data;
@@ -66,6 +65,8 @@ void Graph::loadGraph(const std::string& fileName){
             std::istringstream inputStringStream(data);
             for(int j = 0; j < this->size; j++){
                 inputStringStream >> this->graph[i][j];
+                if (i == j)
+                    this->graph[i][j] = -1;
             }
         }
         std::getline(myFile, data);

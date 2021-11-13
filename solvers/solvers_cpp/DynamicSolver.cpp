@@ -4,33 +4,51 @@
 
 #include "../solvers_h/DynamicSolver.h"
 
-void DynamicSolver::solve(){
+void DynamicSolver::solve() {
     int visitedAll = (1 << this->size) - 1;
-    std::map<std::string, int[2]> cache;
+    cache = new int* [(1 << this->size)];
+    lastCityArray = new int* [(1 << this->size)];
+    for (int i = 0; i < (1 << this->size); i++) {
+        cache[i] = new int[this->size];
+        lastCityArray[i] = new int[this->size];
+        for (int j = 0; j < this->size; j++) {
+            cache[i][j] = -1;
+            lastCityArray[i][j] = -1;
+        }
+    }
     this->recursiveDynamic(1, 0, visitedAll);
     getPath();
+    for (int i = 0; i < (1 << this->size); i++) {
+        delete[] cache[i];
+        delete[] lastCityArray[i];
+    }
+    delete cache;
+    delete lastCityArray;
 }
 
-int DynamicSolver::recursiveDynamic(int mask, int currentCity, int visitedAll){
-    if(mask == visitedAll)
+void DynamicSolver::solveWithOutput() {
+    std::cout << "DynamicSolver doesnt have this function implemented\n";
+}
+
+int DynamicSolver::recursiveDynamic(int mask, int currentCity, int visitedAll) {
+    if (mask == visitedAll)
         return this->graph[currentCity][0];
-    if(cache.find(std::to_string(mask) + std::to_string(currentCity)) != cache.end())
-        return cache[std::to_string(mask) + std::to_string(currentCity)][0];
+    if (cache[mask][currentCity] != -1)
+        return cache[mask][currentCity];
     int cost = INT_MAX;
     int tempCity = -1;
-    for(int city = 0; city < this->size; city++){
-        if((mask & (1 << city)) == 0){
+    for (int city = 0; city < this->size; city++) {
+        if ((mask & (1 << city)) == 0) {
             int newCost = this->graph[currentCity][city] + recursiveDynamic(mask | (1 << city), city, visitedAll);
-            if(newCost < cost){
+            if (newCost < cost) {
                 cost = newCost;
                 tempCity = city;
             }
             this->bestCost = cost;
         }
     }
-    cache[std::to_string(mask) + std::to_string(currentCity)][1] = tempCity;
-    cache[std::to_string(mask) + std::to_string(currentCity)][0] = cost;
-    return cache[std::to_string(mask) + std::to_string(currentCity)][0];
+    lastCityArray[mask][currentCity] = tempCity;
+    return cache[mask][currentCity] = cost;
 }
 
 void DynamicSolver::getPath() {
@@ -40,11 +58,11 @@ void DynamicSolver::getPath() {
     int lastCityIndex = 0;
     int tempLastCityIndex;
     for (int i = 0; i < this->size - 1; ++i) {
-        bestPath[index] = cache[std::to_string(mask) + std::to_string(lastCityIndex)][1];
+        bestPath[index] = lastCityArray[mask][lastCityIndex];
         index++;
         tempLastCityIndex = lastCityIndex;
-        lastCityIndex = cache[std::to_string(mask) + std::to_string(lastCityIndex)][1];
-        mask += (1 << cache[std::to_string(mask) + std::to_string(tempLastCityIndex)][1]);
+        lastCityIndex = lastCityArray[mask][lastCityIndex];
+        mask += (1 << lastCityArray[mask][tempLastCityIndex]);
     }
     bestPath[this->size] = 0;
 }

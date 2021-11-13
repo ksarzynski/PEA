@@ -25,6 +25,7 @@ public:
     int** getGraph();
     int getSize();
     std::string getFileName() {return this->fileName; };
+    int getPredictedResult() { return this->predictedResult; };
 
 private:
 

@@ -9,7 +9,8 @@ Solver::Solver(Graph* _graph){
     this->size = _graph->getSize();
     this->bestCost = INT_MAX;
     this->bestPath = new int[this->size + 1];
-    this->fileName = _graph -> getFileName();
+    this->fileName = _graph->getFileName();
+    this->predictedResult = _graph->getPredictedResult();
 }
 
 Solver::~Solver() {
@@ -20,7 +21,7 @@ Solver::~Solver() {
 }
 
 std::vector<int> Solver::getResult(const std::string& solverType) {
-    std::cout << "File name: " << this->fileName << std::endl;
+    std::cout << "File name: " << this->fileName << ", expected result: " << this->predictedResult << std::endl;
     std::cout << solverType << ": best cost: " << this->bestCost << std::endl;
     std::cout << solverType << ": best path: ";
     for(int i = 0; i < this->size; i++){

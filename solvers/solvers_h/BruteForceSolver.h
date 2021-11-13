@@ -13,7 +13,11 @@
 class BruteForceSolver: public Solver {
 
 public:
+
     void solve();
+
+    void solveWithOutput();
+
     using Solver::Solver;
 };
 

@@ -8,6 +8,7 @@
 
 #include "../../graph/Graph.h"
 #include <vector>
+#include <chrono>
 
 class Solver {
 
@@ -18,6 +19,8 @@ public:
 
     virtual void solve() = 0;
 
+    virtual void solveWithOutput() = 0;
+
     std::vector<int> getResult(const std::string& solverType);
 
 protected:
@@ -26,6 +29,7 @@ protected:
     int bestCost;
     int* bestPath;
     std::string fileName;
+    int predictedResult;
 };
 
 

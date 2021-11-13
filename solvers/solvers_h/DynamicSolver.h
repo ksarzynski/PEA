@@ -7,17 +7,25 @@
 
 
 #include "Solver.h"
-#include <map>
 
 class DynamicSolver : public Solver {
 
 public:
+
     void solve();
+
+    void solveWithOutput();
+
     using Solver::Solver;
 
 private:
-    std::map<std::string, int[2]> cache;
+
+    int** cache;
+    int** lastCityArray;
+    bool isCacheDone = false;
+
     int recursiveDynamic(int mask, int currentCity, int visitedAll);
+
     void getPath();
 };
 

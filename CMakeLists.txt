@@ -22,8 +22,10 @@ set(
             ${APP_SOLVERS}/solvers_cpp/BruteForceSolver.cpp
             ${APP_SOLVERS}/solvers_h/DynamicSolver.h
             ${APP_SOLVERS}/solvers_cpp/DynamicSolver.cpp
-            ${APP_SOLVERS}/solvers_h/BranchAndBoundSolver.h
-            ${APP_SOLVERS}/solvers_cpp/BranchAndBoundSolver.cpp
+            ${APP_SOLVERS}/solvers_h/BestFirstBranchAndBoundSolver.h
+            ${APP_SOLVERS}/solvers_cpp/BestFirstBranchAndBoundSolver.cpp
+            ${APP_SOLVERS}/solvers_h/DepthFirstBranchAndBoundSolver.h
+            ${APP_SOLVERS}/solvers_cpp/DepthFirstBranchAndBoundSolver.cpp
             ${APP_GRAPH}/Graph.h
             ${APP_GRAPH}/Graph.cpp
             ${APP_TESTER}/Tester.h

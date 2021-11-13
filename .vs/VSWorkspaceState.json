@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\graph",
+    "\\solvers",
+    "\\solvers\\solvers_cpp",
+    "\\solvers\\solvers_h",
+    "\\tester"
+  ],
+  "SelectedNode": "\\main.cpp",
+  "PreviewInSolutionExplorer": false
+}
