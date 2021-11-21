@@ -1,4 +1,5 @@
 ﻿#include "Tester.h"
+#include "MultiThreadedBFSolver.h"
 
 std::vector<std::vector<std::string>> init() {
     std::vector<std::string> emptyFileNames = {};
@@ -17,6 +18,13 @@ std::vector<std::vector<std::string>> init() {
 }
 
 int main() {
+    //auto numThreads = std::thread::hardware_concurrency();
+    //std::cout << "threads: " << numThreads << std::endl;
     // Tester::testWithDataFromFiles(init(), true);
-    Tester::test("init.txt");
+    // Tester::test("init.txt");
+    // auto graph = new Graph(8, 25, false);
+    auto graph = new Graph("m13.atsp");
+    auto solver = new MultiThreadedBFSolver(graph);
+    solver->solve();
+    solver->getResult("multi threaded bf");
 }
