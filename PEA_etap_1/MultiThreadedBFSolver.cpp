@@ -57,13 +57,14 @@ void MultiThreadedBFSolver::solve() {
     auto stop = std::chrono::high_resolution_clock::now();
     this->time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
 }
-
+ 
 // path is path to be permutated without last vertex
 void MultiThreadedBFSolver::run(std::vector<int> path, int size, int id) {
     std::vector<int> thisThreadBestPath;
     int currentCost;
     int minCost = INT_MAX;
     auto start = std::chrono::high_resolution_clock::now();
+    std::sort(path.begin() + size, path.end());
     do {
         currentCost = 0;
         path.push_back(path[0]);
@@ -79,14 +80,17 @@ void MultiThreadedBFSolver::run(std::vector<int> path, int size, int id) {
     } while (std::next_permutation(path.begin() + size, path.end()));
     thisThreadBestPath.push_back(path.at(0));
     auto stop = std::chrono::high_resolution_clock::now();
-    while (!this->bestCostMutex.try_lock()) {
-        this->bestCost = minCost;
+    
+    bestCostMutex.lock();
+    if(minCost < this->bestCost){
+       this->bestCost = minCost;
         for (int i = 0; i < this->size + 1; i++)
             this->bestPath[i] = thisThreadBestPath[i];
-        // std::cout << id + " " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << " microseconds\n";
-        bestCostMutex.unlock();
+        // std::cout << id + " " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << " microseconds\n
     }
+    bestCostMutex.unlock();
 }
+
 
 void MultiThreadedBFSolver::solveWithOutput() {
     std::cout << "Not implemented\n";
