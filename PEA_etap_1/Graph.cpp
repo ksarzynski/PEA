@@ -48,7 +48,7 @@ void Graph::printGraph() {
 
 void Graph::loadGraph(const std::string& fileName) {
     std::ifstream myFile;
-    myFile.open("C:/Users/kacpe/source/repos/PEA_etap_1/data/" + fileName);
+    myFile.open("C:/Users/kacpe/Downloads/ak2/data/" + fileName);
     if (myFile.good()) {
         std::string data;
         std::getline(myFile, data);

@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BestFirstBranchAndBoundSolver.cpp" />
     <ClCompile Include="BranchAndBoundSolver.cpp" />
     <ClCompile Include="BruteForceSolver.cpp" />
     <ClCompile Include="DynamicSolver.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="Tester.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BestFirstBranchAndBoundSolver.h" />
     <ClInclude Include="BranchAndBoundSolver.h" />
     <ClInclude Include="BruteForceSolver.h" />
     <ClInclude Include="DynamicSolver.h" />

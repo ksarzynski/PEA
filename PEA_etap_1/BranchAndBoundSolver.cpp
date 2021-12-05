@@ -1,6 +1,9 @@
 #include "BranchAndBoundSolver.h"
 
+int index = 0;
+
 void BranchAndBoundSolver::solve() {
+    // init variables
     int* currentPath = new int[this->size];
     memset(currentPath, -1, this->size);
     bool* visited = new bool[this->size];
@@ -9,13 +12,19 @@ void BranchAndBoundSolver::solve() {
     visited[0] = true;
     currentPath[0] = 0;
     int finalResult = INT_MAX;
+    // start time measuring
     auto start = std::chrono::high_resolution_clock::now();
+    // call recursive method
     recursiveBranchAndBound(lowerBound, 0, 1, visited, currentPath, finalResult);
+    // finish time measuring
     auto stop = std::chrono::high_resolution_clock::now();
+    // update cost and time variables
     this->bestCost = finalResult;
     this->time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+    // free allocated memory
     delete[] visited;
     delete[] currentPath;
+    std::cout << index;
 }
 
 void BranchAndBoundSolver::solveWithOutput() {
@@ -64,6 +73,11 @@ int BranchAndBoundSolver::getFirstLowerBound() {
 }
 
 void BranchAndBoundSolver::recursiveBranchAndBound(int currentBound, int currentCost, int level, bool* visited, int* currentPath, int& finalResult) {
+    index++;
+    for (int i = 0; i < this->size; i++)
+        std::cout << visited[i] << " ";
+    std::cout << std::endl;
+    // if all cities were visited calculate final cost and update the best one if current one is better and finish method
     if (level == this->size) {
         int currentResult = currentCost + this->graph[currentPath[level - 1]][currentPath[0]];
         if (currentResult < finalResult) {
@@ -73,19 +87,26 @@ void BranchAndBoundSolver::recursiveBranchAndBound(int currentBound, int current
         }
         return;
     }
+    // for each city
     for (int i = 0; i < this->size; i++) {
+        // if there is connection to this city and its not visited
         if (this->graph[level - 1][i] != 0 && !visited[i]) {
+            // save current bound and update current cost
             int temp = currentBound;
             currentCost += this->graph[currentPath[level - 1]][i];
+            // calculate new bound
             if (level == 1)
                 currentBound -= ((getFirstMin(currentPath[level - 1]) + getFirstMin(i)) / 2);
             else
                 currentBound -= ((getSecondMin(currentPath[level - 1]) + getFirstMin(i)) / 2);
-            if (currentBound + currentCost < finalResult) {
+            // if path is promising update path, visited array and recursively calculate whole cost
+            //if (currentBound + currentCost < finalResult) {
+            if (currentBound + currentCost < 321321321321) {
                 currentPath[level] = i;
                 visited[i] = true;
                 recursiveBranchAndBound(currentBound, currentCost, level + 1, visited, currentPath, finalResult);
             }
+            // update current cost, bound and visited array
             currentCost -= this->graph[currentPath[level - 1]][i];
             currentBound = temp;
             memset(visited, false, this->size);

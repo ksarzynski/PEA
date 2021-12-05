@@ -5,6 +5,7 @@
 #include "BruteForceSolver.h"
 #include "DynamicSolver.h"
 #include "BranchAndBoundSolver.h"
+#include "BestFirstBranchAndBoundSolver.h"
 #include "TestCase.h"
 
 class Tester
@@ -29,5 +30,7 @@ private:
     static std::vector<TestCase*> getTestCasesFromFile(std::string fileName);
 
     static void saveResult(std::string fileName, std::string instance, std::vector<float> timeResults);
+
+    static const std::string path;
 };
 

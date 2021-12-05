@@ -1,7 +1,8 @@
-﻿  PEA_etap_1.cpp
+﻿  BranchAndBoundSolver.cpp
+C:\Users\kacpe\Downloads\ak2\PEA_etap_1\BranchAndBoundSolver.cpp(130,27): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
   Trwa generowanie kodu
-  1 of 511 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  2 of 621 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    22 functions had inline decision re-evaluated but remain unchanged
   Zakończono generowanie kodu
-  PEA_etap_1.vcxproj -> C:\Users\kacpe\source\repos\PEA_etap_1\x64\Release\PEA_etap_1.exe
+  PEA_etap_1.vcxproj -> C:\Users\kacpe\Downloads\ak2\x64\Release\PEA_etap_1.exe

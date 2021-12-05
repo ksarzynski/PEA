@@ -1,7 +1,9 @@
 #include "Tester.h"
 
+const std::string Tester::path = "C:/Users/kacpe/Downloads/ak2/";
+
 void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output) {
-    if (fileNamesForEachAlgorithm.size() != 3) {
+    if (fileNamesForEachAlgorithm.size() != 4) {
         std::cout << "Wrong data input!";
         return;
     }
@@ -35,6 +37,17 @@ void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNam
         branchAndBoundSolver->getResult("branch and bound");
         delete branchAndBoundSolver;
     }
+    // branch and bound best first
+    for (const std::string& fileName : fileNamesForEachAlgorithm[2]) {
+        auto graph = new Graph(fileName);
+        auto bestFirstBranchAndBoundSolver = new BestFirstBranchAndBoundSolver(graph);
+        if (output)
+            bestFirstBranchAndBoundSolver->solveWithOutput();
+        else
+            bestFirstBranchAndBoundSolver->solve();
+        bestFirstBranchAndBoundSolver->getResult("branch and bound");
+        delete bestFirstBranchAndBoundSolver;
+    }
 }
 
 void Tester::testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests){
@@ -43,11 +56,11 @@ void Tester::testWithRandomData(int bruteForceTests, int dynamicTests, int branc
 
 void Tester::test(std::string fileName) {
     std::ofstream ofs;
-    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/brute_force_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(path + "PEA_etap_1 / results / brute_force_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/dynamic_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(path + "PEA_etap_1/results/dynamic_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/branch_and_bound_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(path + "PEA_etap_1/results/branch_and_bound_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     test(getTestCasesFromFile(fileName));
 }
@@ -85,7 +98,7 @@ void Tester::test(TestCase* testCase){
             solver->getResult("brute force");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/brute_force_results.txt", testCase->getFileName() +
+        saveResult(path + "PEA_etap_1results/brute_force_results.txt", testCase->getFileName() +
             " size: " + std::to_string(testCase->getSize()), timeResults);
         timeResults.clear();
         delete solver;
@@ -100,7 +113,7 @@ void Tester::test(TestCase* testCase){
             solver->getResult("dynamic");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/dynamic_results.txt", testCase->getFileName() +
+        saveResult(path + "PEA_etap_1/results/dynamic_results.txt", testCase->getFileName() +
             " size: " + std::to_string(testCase->getSize()), timeResults);
         timeResults.clear();
         delete solver;
@@ -115,13 +128,28 @@ void Tester::test(TestCase* testCase){
             solver->getResult("branch and bound");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/branch_and_bound_results.txt", testCase->getFileName() +
+        saveResult(path + "PEA_etap_1 / results / branch_and_bound_results.txt", testCase->getFileName() +
             " size: " + std::to_string(testCase->getSize()), timeResults);
         timeResults.clear();
         delete solver;
     }
           break;
     
+    // branch and bound
+    case 3: {
+        auto solver = new BestFirstBranchAndBoundSolver(graph);
+        for (int i = 0; i < testCase->getHowManyTests(); i++) {
+            solver->solve();
+            solver->getResult("best first branch and bound");
+            timeResults.push_back((float)solver->getTime() / 1000000);
+        }
+        saveResult(path + "PEA_etap_1 / results / best_first_branch_and_bound_results.txt", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults);
+        timeResults.clear();
+        delete solver;
+    }
+          break;
+
     default: {
         std::cout << "wrong algorithm!\n";
     }
@@ -142,7 +170,7 @@ std::vector<TestCase*> Tester::sort(std::vector<TestCase*> testCases, int algori
 // field is equal to 0 if empty
 std::vector<TestCase*> Tester::getTestCasesFromFile(std::string fileName) {
     std::vector<TestCase*> result;
-    std::ifstream infile("C:/Users/kacpe/source/repos/PEA_etap_1/test/" + fileName);
+    std::ifstream infile("C:/Users/kacpe/Downloads/ak2/test/" + fileName);
     bool isFromFile;
     std::string _fileName;
     int size;
