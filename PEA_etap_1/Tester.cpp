@@ -1,7 +1,7 @@
 #include "Tester.h"
 
 void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output) {
-    if (fileNamesForEachAlgorithm.size() != 3) {
+    if (fileNamesForEachAlgorithm.size() != 4) {
         std::cout << "Wrong data input!";
         return;
     }
@@ -35,6 +35,17 @@ void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNam
         branchAndBoundSolver->getResult("branch and bound");
         delete branchAndBoundSolver;
     }
+    // multi threaded brute force
+    for (const std::string& fileName : fileNamesForEachAlgorithm[3]) {
+        auto graph = new Graph(fileName);
+        auto multiThreadedBFSolver = new MultiThreadedBFSolver(graph);
+        if (output)
+            multiThreadedBFSolver->solveWithOutput();
+        else
+            multiThreadedBFSolver->solve();
+        multiThreadedBFSolver->getResult("multi threaded bf");
+        delete multiThreadedBFSolver;
+    }
 }
 
 void Tester::testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests){
@@ -49,6 +60,8 @@ void Tester::test(std::string fileName) {
     ofs.close();
     ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/branch_and_bound_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
+    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/multi_threaded_bf_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
     test(getTestCasesFromFile(fileName));
 }
 
@@ -57,12 +70,15 @@ void Tester::test(std::vector<TestCase*> testCases) {
     std::vector<TestCase*> bruteForceTestCases = sort(testCases, 0);
     std::vector<TestCase*> dynamicTestCases = sort(testCases, 1);
     std::vector<TestCase*> branchAndBoundTestCases = sort(testCases, 2);
+    std::vector<TestCase*> multiThreadedBFTestCases = sort(testCases, 3);
     // running tests
     for (TestCase* testCase : bruteForceTestCases)
         test(testCase);
     for (TestCase* testCase : dynamicTestCases)
         test(testCase);
     for (TestCase* testCase : branchAndBoundTestCases)
+        test(testCase);
+    for (TestCase* testCase : multiThreadedBFTestCases)
         test(testCase);
 }
 
@@ -121,6 +137,21 @@ void Tester::test(TestCase* testCase){
         delete solver;
     }
           break;
+
+    // multi threaded bf
+    case 3: {
+        auto solver = new MultiThreadedBFSolver(graph);
+        for (int i = 0; i < testCase->getHowManyTests(); i++) {
+            solver->solve();
+            solver->getResult("multi threaded bf");
+            timeResults.push_back((float)solver->getTime() / 1000000);
+        }
+        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/multi_threaded_bf_results.txt", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults);
+        timeResults.clear();
+        delete solver;
+    }
+          break;
     
     default: {
         std::cout << "wrong algorithm!\n";
@@ -142,7 +173,7 @@ std::vector<TestCase*> Tester::sort(std::vector<TestCase*> testCases, int algori
 // field is equal to 0 if empty
 std::vector<TestCase*> Tester::getTestCasesFromFile(std::string fileName) {
     std::vector<TestCase*> result;
-    std::ifstream infile("C:/Users/kacpe/source/repos/PEA_etap_1/test/" + fileName);
+    std::ifstream infile("C:/Users/kacpe/Downloads/pea_watki/test/" + fileName);
     bool isFromFile;
     std::string _fileName;
     int size;

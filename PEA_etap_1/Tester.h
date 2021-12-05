@@ -5,6 +5,7 @@
 #include "BruteForceSolver.h"
 #include "DynamicSolver.h"
 #include "BranchAndBoundSolver.h"
+#include "MultiThreadedBFSolver.h"
 #include "TestCase.h"
 
 class Tester
