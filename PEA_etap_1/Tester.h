@@ -6,6 +6,7 @@
 #include "DynamicSolver.h"
 #include "BranchAndBoundSolver.h"
 #include "MultiThreadedBFSolver.h"
+#include "SimulatedAnnealingSolver.h"
 #include "TestCase.h"
 
 class Tester

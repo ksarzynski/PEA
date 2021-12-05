@@ -1,7 +1,7 @@
 #include "Tester.h"
 
 void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output) {
-    if (fileNamesForEachAlgorithm.size() != 4) {
+    if (fileNamesForEachAlgorithm.size() != 6) {
         std::cout << "Wrong data input!";
         return;
     }
@@ -46,6 +46,28 @@ void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNam
         multiThreadedBFSolver->getResult("multi threaded bf");
         delete multiThreadedBFSolver;
     }
+    // simulated annealing
+    for (const std::string& fileName : fileNamesForEachAlgorithm[4]) {
+        auto graph = new Graph(fileName);
+        auto simulatedAnnealingSolver = new MultiThreadedBFSolver(graph);
+        if (output)
+            simulatedAnnealingSolver->solveWithOutput();
+        else
+            simulatedAnnealingSolver->solve();
+        simulatedAnnealingSolver->getResult("simulated annealing");
+        delete simulatedAnnealingSolver;
+    }
+    // multi threaded simulated annealing
+    for (const std::string& fileName : fileNamesForEachAlgorithm[5]) {
+        auto graph = new Graph(fileName);
+        auto simulatedAnnealingSolver = new SimulatedAnnealingSolver(graph);
+        if (output)
+            simulatedAnnealingSolver->solveWithOutput();
+        else
+            simulatedAnnealingSolver->solve();
+        simulatedAnnealingSolver->getResult("simulated annealing");
+        delete simulatedAnnealingSolver;
+    }
 }
 
 void Tester::testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests){
@@ -62,6 +84,10 @@ void Tester::test(std::string fileName) {
     ofs.close();
     ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/multi_threaded_bf_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
+    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/simulated_annealing.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/multi_threaded_simulated_annealing.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
     test(getTestCasesFromFile(fileName));
 }
 
@@ -71,6 +97,8 @@ void Tester::test(std::vector<TestCase*> testCases) {
     std::vector<TestCase*> dynamicTestCases = sort(testCases, 1);
     std::vector<TestCase*> branchAndBoundTestCases = sort(testCases, 2);
     std::vector<TestCase*> multiThreadedBFTestCases = sort(testCases, 3);
+    std::vector<TestCase*> simulatedAnnealingTestCases = sort(testCases, 4);
+    std::vector<TestCase*> multiThreadedSATestCases = sort(testCases, 5);
     // running tests
     for (TestCase* testCase : bruteForceTestCases)
         test(testCase);
@@ -79,6 +107,10 @@ void Tester::test(std::vector<TestCase*> testCases) {
     for (TestCase* testCase : branchAndBoundTestCases)
         test(testCase);
     for (TestCase* testCase : multiThreadedBFTestCases)
+        test(testCase);
+    for (TestCase* testCase : simulatedAnnealingTestCases)
+        test(testCase);
+    for (TestCase* testCase : multiThreadedSATestCases)
         test(testCase);
 }
 
@@ -153,6 +185,36 @@ void Tester::test(TestCase* testCase){
     }
           break;
     
+    // simulated annealing
+    case 4: {
+        auto solver = new SimulatedAnnealingSolver(graph);
+        for (int i = 0; i < testCase->getHowManyTests(); i++) {
+            solver->solve();
+            solver->getResult("simulated annealing");
+            timeResults.push_back((float)solver->getTime() / 1000000);
+        }
+        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/simulated_annealing.txt", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults);
+        timeResults.clear();
+        delete solver;
+    }
+          break;
+
+    // multi threaded sa
+    case 5: {
+        auto solver = new SimulatedAnnealingSolver(graph);
+        for (int i = 0; i < testCase->getHowManyTests(); i++) {
+            solver->solve();
+            solver->getResult("multi threaded sa");
+            timeResults.push_back((float)solver->getTime() / 1000000);
+        }
+        saveResult("C:/Users/kacpe/source/repos/PEA_etap_1/PEA_etap_1/results/multi_threaded_sa_results.txt", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults);
+        timeResults.clear();
+        delete solver;
+    }
+          break;
+
     default: {
         std::cout << "wrong algorithm!\n";
     }
@@ -169,7 +231,13 @@ std::vector<TestCase*> Tester::sort(std::vector<TestCase*> testCases, int algori
 
 // file structure:
 // format: isFromFile, fileName, size, algorithm, howManyTests
-// algorithm: 0 - brute force, 1 - dynamic, 2 - branch and bound
+// algorithm: 
+//  0 - brute force,
+//  1 - dynamic,
+//  2 - branch and bound,
+//  3 - multi threaded bf,
+//  4 - simulated annealing,
+//  5 - multi threaded simulated annealing
 // field is equal to 0 if empty
 std::vector<TestCase*> Tester::getTestCasesFromFile(std::string fileName) {
     std::vector<TestCase*> result;

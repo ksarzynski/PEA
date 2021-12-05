@@ -146,6 +146,7 @@
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="MultiThreadedBFSolver.cpp" />
     <ClCompile Include="PEA_etap_1.cpp" />
+    <ClCompile Include="SimulatedAnnealingSolver.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="TestCase.cpp" />
     <ClCompile Include="Tester.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="DynamicSolver.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="MultiThreadedBFSolver.h" />
+    <ClInclude Include="SimulatedAnnealingSolver.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="TestCase.h" />
     <ClInclude Include="Tester.h" />
