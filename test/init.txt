@@ -1,1 +1,8 @@
-1 m13.atsp 13 4 1
+1 bays29.tsp 29 3 1
+1 att48.tsp 48 3 1
+1 berlin52.tsp 52 3 1
+1 gr120.tsp 120 3 1
+1 bays29.tsp 29 4 1
+1 att48.tsp 48 4 1
+1 berlin52.tsp 52 4 1
+1 gr120.tsp 120 4 1

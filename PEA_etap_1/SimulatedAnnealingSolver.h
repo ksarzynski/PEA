@@ -18,13 +18,25 @@ public:
 
     float getError() { return this->error; };
 
+    void setParams(firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm);
+
+    void getParams(firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice);
+
     using Solver::Solver;
 
 private:
 
     float error;
 
+    firstSolutionMethod fsm;
+
+    nextSolutionMethod nsm;
+
+    coolingMethod cm;
+
     void solveWithParams(double p, double q, double endTemperature, firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice);
+
+    void solveWithParamsAndOutput(double p, double q, double endTemperature, firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice);
 
     std::vector<int> getStartingSolutionGreedy();
 

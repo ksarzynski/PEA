@@ -1,40 +1,27 @@
 #include "SimulatedAnnealingSolver.h"
 
 void SimulatedAnnealingSolver::solve() {
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, INSERT, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, INSERT, CAUCHY);
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, SWAP, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, SWAP, CAUCHY);
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, INVERT, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, RANDOM, INVERT, CAUCHY);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, INSERT, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, INSERT, CAUCHY);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, SWAP, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, SWAP, CAUCHY);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, INVERT, GEOMETRICAL);
-    solveWithParams(0.99, 0.1, 0.1, GREEDY, INVERT, CAUCHY);
+    this->solveWithParams(0.99, 0.1, 0.1, this->fsm, this->nsm, this->cm);
 }
 
 void SimulatedAnnealingSolver::solveWithOutput() {
-    std::cout << "SimulatedAnnealingSolver doesnt have this function implemented yet\n";
+    this->solveWithParamsAndOutput(0.99, 0.1, 0.1, this->fsm, this->nsm, this->cm);
 }
 
 // p - value used by geometrical cooling method
 // q - value used to scale amount of iterations done
 // end temperature - value of temperature that stops algorithm
-// firstSolutionMethod: 0 - greedy, 1 - random
-// nextSolutionMethod: 0 - invert, else swap
-// coolingMethod: 0 - geometrical, else - cauchy
 void SimulatedAnnealingSolver::solveWithParams(double p, double q, double endTemperature,
-    firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice){
+    firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice) {
     this->printParameters(p, q, endTemperature, fsmChoice, nsmChoice, cmChoice);
     auto start = std::chrono::high_resolution_clock::now();
     int counter = 0;
     std::random_device rd;
     std::mt19937 g(rd());
     std::uniform_real_distribution<double> num(0.0, 1.0);
+    std::default_random_engine(std::time(0));
     std::vector<int> firstSolution;
-    if(fsmChoice == RANDOM)
+    if (fsmChoice == RANDOM)
         firstSolution = this->getStartingSolutionRandom();
     else
         firstSolution = this->getStartingSolutionGreedy();
@@ -81,7 +68,83 @@ void SimulatedAnnealingSolver::solveWithParams(double p, double q, double endTem
     this->getResult("simulated annealing");
 }
 
-std::vector<int> SimulatedAnnealingSolver::getStartingSolutionGreedy(){
+void SimulatedAnnealingSolver::solveWithParamsAndOutput(double p, double q, double endTemperature,
+    firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice) {
+    this->printParameters(p, q, endTemperature, fsmChoice, nsmChoice, cmChoice);
+    auto start = std::chrono::high_resolution_clock::now();
+    int counter = 0;
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::uniform_real_distribution<double> num(0.0, 1.0);
+    std::default_random_engine(std::time(0));
+    std::vector<int> firstSolution;
+    if (fsmChoice == RANDOM)
+        firstSolution = this->getStartingSolutionRandom();
+    else
+        firstSolution = this->getStartingSolutionGreedy();
+    std::cout << "first solution:\n";
+    for (int i = 0; i < firstSolution.size(); i++)
+        std::cout << firstSolution[i] << " - ";
+    std::cout << "\n";
+    std::vector<int> firstSolutionToPrint = firstSolution;
+    int firstSolutionCostToPrint = this->getCost(firstSolution);
+    std::cout << "0 " << firstSolutionCostToPrint << " " << 100 * float(firstSolutionCostToPrint - this->predictedResult) / this->predictedResult << "%\n";
+    int firstSolutionCost = this->getCost(firstSolution);
+    std::vector<int> bestSolution = firstSolution;
+    int bestSolutionCost = this->getCost(bestSolution);
+    std::vector<int> solution = firstSolution;
+    int solutionCost = this->getCost(solution);
+    double tempTemperature = getStartingTemp();
+    double startTemperature = tempTemperature;
+    while (tempTemperature > endTemperature) {
+        counter++;
+        bool print = false;
+        int costToPrint = INT_MAX;
+        int iter = INT_MAX;
+        for (int i = 0; i < q * ((double)this->size * ((double)this->size - 1)) / 2; i++) {
+            if (nsmChoice == INSERT)
+                solution = this->getNextSolutionInsert(firstSolution);
+            else if (nsmChoice == SWAP)
+                solution = this->getNextSolutionSwap(firstSolution);
+            else
+                solution = this->getNextSolutionInvert(firstSolution);
+            solutionCost = this->getCost(solution);
+            if (solutionCost < firstSolutionCost) {
+                firstSolution = solution;
+                firstSolutionCost = solutionCost;
+            }
+            else if (num(g) < exp(((double)firstSolutionCost - solutionCost) / tempTemperature)) {
+                firstSolution = solution;
+                firstSolutionCost = solutionCost;
+            }
+            if (solutionCost < bestSolutionCost) {
+                iter = i;
+                costToPrint = solutionCost;
+                print = true;
+                bestSolution = solution;
+                bestSolutionCost = solutionCost;
+            }
+        }
+        if (print)
+            std::cout << iter << " " << costToPrint << " " << 100 * float(bestSolutionCost - this->predictedResult) / this->predictedResult << "%\n";
+        if (cmChoice == GEOMETRICAL)
+            tempTemperature = this->geometricalCooling(tempTemperature, p);
+        else
+            tempTemperature = this->cauchyCooling(tempTemperature, 0.999, 0.0001, counter);
+    }
+    std::cout << "0 " << firstSolutionCostToPrint << " " << 100 * float(firstSolutionCostToPrint - this->predictedResult) / this->predictedResult << "%\n";
+    for (int i = 0; i < firstSolution.size(); i++)
+        std::cout << firstSolution[i] << " - ";
+    std::cout << "\n";
+    auto stop = std::chrono::high_resolution_clock::now();
+    this->time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+    for (int i = 0; i < this->size; i++)
+        this->bestPath[i] = bestSolution[i];
+    this->bestCost = bestSolutionCost;
+    this->getResult("simulated annealing");
+}
+
+std::vector<int> SimulatedAnnealingSolver::getStartingSolutionGreedy() {
     std::vector<int> result;
     int startVertex = 0;
     bool* visited = new bool[this->size];
@@ -96,7 +159,7 @@ std::vector<int> SimulatedAnnealingSolver::getStartingSolutionGreedy(){
     return result;
 }
 
-std::vector<int> SimulatedAnnealingSolver::getStartingSolutionRandom(){
+std::vector<int> SimulatedAnnealingSolver::getStartingSolutionRandom() {
     std::random_device rd;
     std::mt19937 g(rd());
     std::uniform_real_distribution<double> num(0.0, 1.0);
@@ -130,7 +193,7 @@ int SimulatedAnnealingSolver::getCost(std::vector<int> path) {
     }
 }
 
-std::vector<int> SimulatedAnnealingSolver::getNextSolutionInsert(std::vector<int> solution){
+std::vector<int> SimulatedAnnealingSolver::getNextSolutionInsert(std::vector<int> solution) {
     std::vector<int> result(solution);
     int i = 0;
     int j = 0;
@@ -149,7 +212,7 @@ std::vector<int> SimulatedAnnealingSolver::getNextSolutionInsert(std::vector<int
     return result;
 }
 
-std::vector<int> SimulatedAnnealingSolver::getNextSolutionSwap(std::vector<int> solution){
+std::vector<int> SimulatedAnnealingSolver::getNextSolutionSwap(std::vector<int> solution) {
     std::vector<int> nextSolution = solution;
     int v1 = rand() % this->size;
     int v2 = rand() % this->size;
@@ -162,7 +225,7 @@ std::vector<int> SimulatedAnnealingSolver::getNextSolutionSwap(std::vector<int> 
     return nextSolution;
 }
 
-std::vector<int> SimulatedAnnealingSolver::getNextSolutionInvert(std::vector<int> solution){
+std::vector<int> SimulatedAnnealingSolver::getNextSolutionInvert(std::vector<int> solution) {
     int p = rand() % this->size + 1;
     std::vector<int> nextSolution = solution;
     std::vector<int> temp;
@@ -192,7 +255,7 @@ double SimulatedAnnealingSolver::getStartingTemp() {
     std::vector<int> solution;
     for (int i = 0; i < this->size; i++)
         solution.push_back(i);
-    std::shuffle(std::begin(solution), std::end(solution), std::default_random_engine(0));
+    std::shuffle(std::begin(solution), std::end(solution), std::default_random_engine(std::time(0)));
     solution.push_back(solution[0]);
     int costToCompare = this->getCost(solution);
     for (int i = 0; i < this->size; i++) {
@@ -232,4 +295,49 @@ void SimulatedAnnealingSolver::printParameters(double p, double q, double endTem
     std::cout << "firstSolutionMethod: " << fsmChoice << "\n";
     std::cout << "nextSolutionMethod: " << nsmChoice << "\n";
     std::cout << "coolingMethod: " << cmChoice << "\n";
+}
+
+void SimulatedAnnealingSolver::setParams(firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm) {
+    this->fsm = fsm;
+    this->nsm = nsm;
+    this->cm = cm;
+}
+
+void SimulatedAnnealingSolver::getParams(firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice) {
+    int tests = 5;
+    float error;
+    float bestError = INT_MAX;
+    long long bestTime = LLONG_MAX;
+    double bestP;
+    double bestQ;
+    double bestEndTemperature;
+    long long time;
+    // p
+    for (double i = 0.85; i < 1; i += 0.1)
+        // q
+        for (double j = 0.1; j < 1.01; j += 0.1)
+            // end temperature
+            for (double k = 0.1; k < 5; k += 0.1) {
+                error = 0;
+                for (int l = 0; l < tests; l++) {
+                    this->solveWithParams(i, j, k, this->fsm, this->nsm, this->cm);
+                    error += this->getError();
+                }
+                error /= tests;
+                time = this->getTime();
+                if (error < bestError && time < bestTime) {
+                    bestTime = time;
+                    bestError = error;
+                    bestP = i;
+                    bestQ = j;
+                    bestEndTemperature = k;
+                }
+            }
+    std::cout << "---------------------------------------------\n";
+    std::cout << "bestError: " << bestError << std::endl;
+    std::cout << "bestP: " << bestP << std::endl;
+    std::cout << "bestQ: " << bestQ << std::endl;
+    std::cout << "bestEndTemperature: " << bestEndTemperature << std::endl;
+    std::cout << "---------------------------------------------\n";
+    std::cout << "time: " << bestTime << std::endl << std::endl;
 }

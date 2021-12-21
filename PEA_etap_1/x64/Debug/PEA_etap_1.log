@@ -1,13 +1,2 @@
-﻿  BranchAndBoundSolver.cpp
-  BruteForceSolver.cpp
-  DynamicSolver.cpp
-C:\Users\kacpe\source\repos\PEA_etap_1\PEA_etap_1\DynamicSolver.cpp(5,41): warning C4334: "<<": wynik 32-bitowe przesunięcia niejawnie skonwertowano do 64 bitów (czy 64-bitowe przesunięcie było zamierzone?)
-C:\Users\kacpe\source\repos\PEA_etap_1\PEA_etap_1\DynamicSolver.cpp(6,49): warning C4334: "<<": wynik 32-bitowe przesunięcia niejawnie skonwertowano do 64 bitów (czy 64-bitowe przesunięcie było zamierzone?)
-  Graph.cpp
-C:\Users\kacpe\source\repos\PEA_etap_1\PEA_etap_1\Graph.cpp(93,15): warning C4244: "argument": konwersja z "time_t" do "unsigned int", możliwa utrata danych
-C:\Users\kacpe\source\repos\PEA_etap_1\PEA_etap_1\Graph.cpp(108,15): warning C4244: "argument": konwersja z "time_t" do "unsigned int", możliwa utrata danych
-  PEA_etap_1.cpp
-  Solver.cpp
-  Tester.cpp
-  Generowanie kodu...
-  PEA_etap_1.vcxproj -> C:\Users\kacpe\source\repos\PEA_etap_1\x64\Debug\PEA_etap_1.exe
+﻿  PEA_etap_1.cpp
+  PEA_etap_1.vcxproj -> C:\Users\kacpe\Downloads\pea_2\x64\Debug\PEA_etap_1.exe

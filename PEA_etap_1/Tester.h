@@ -14,19 +14,20 @@ class Tester
 
 public:
 
-    static void testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests);
 
     static void testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output);
 
-    static void test(std::string fileName);
+    static void test(std::string fileName, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime);
     
 private:
 
-    static void test(std::vector<TestCase*> testCases);
+    static void test(std::vector<TestCase*> testCases, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime);
 
-    static std::vector<TestCase*> sort(std::vector<TestCase*> testCases, int algorithm);
+    static std::vector<TestCase*> sort(std::vector<TestCase*> testCases, algorithmEnum algorithm);
 
     static void test(TestCase* testCase);
+
+    static void test(TestCase* testCase, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime);
 
     static std::vector<TestCase*> getTestCasesFromFile(std::string fileName);
 

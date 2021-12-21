@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
+#include "Enums.h"
 class TestCase
 {
 public:
 
 	TestCase();
 	
-	TestCase(bool _isFromFile, std::string _fileName, int _size, int _algorithm, int _howManyTests);
+	TestCase(bool _isFromFile, std::string _fileName, int _size, algorithmEnum _algorithm , int _howManyTests);
 
 	bool getIsFromFile();
 
@@ -24,7 +25,7 @@ public:
 
 	void setSize(int _size);
 
-	void setAlgorithm(int _algorithm);
+	void setAlgorithm(algorithmEnum _algorithm);
 
 	void setHowManyTests(int _howManyTests);
 
@@ -33,9 +34,6 @@ private:
 	bool isFromFile;
 	std::string fileName;
 	int size;
-	// 0 - brute force
-	// 1 - dynamic
-	// 2 - branch and bound
 	int algorithm;
 	int howManyTests;
 };

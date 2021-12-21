@@ -6,7 +6,7 @@ TestCase::TestCase() {
 	this->howManyTests = 1;
 }
 
-TestCase::TestCase(bool _isFromFile, std::string _fileName, int _size, int _algorithm, int _howManyTests) {
+TestCase::TestCase(bool _isFromFile, std::string _fileName, int _size, algorithmEnum _algorithm, int _howManyTests) {
 	this->isFromFile = _isFromFile;
 	this->fileName = _fileName;
 	this->size = _size;
@@ -46,7 +46,7 @@ void TestCase::setSize(int _size) {
 	this->size = _size;
 }
 
-void TestCase::setAlgorithm(int _algorithm) {
+void TestCase::setAlgorithm(algorithmEnum _algorithm) {
 	this->algorithm = _algorithm;
 }
 

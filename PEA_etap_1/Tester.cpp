@@ -1,7 +1,7 @@
 #include "Tester.h"
 
 const int NO_ALGORITHMS = 5;
-const std::string PATH = "C:/Users/kacpe/source/repos/PEA_etap_1/";
+const std::string PATH = "C:/Users/kacpe/Downloads/pea_2/";
 
 void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNamesForEachAlgorithm, bool output) {
     if (fileNamesForEachAlgorithm.size() != NO_ALGORITHMS) {
@@ -62,12 +62,8 @@ void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNam
     }
 }
 
-void Tester::testWithRandomData(int bruteForceTests, int dynamicTests, int branchAndBoundTests){
-
-}
-
-void Tester::test(std::string fileName) {
-    std::string resultsPath = PATH + "PEA_etap_1/results/";
+void Tester::test(std::string fileName, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime) {
+    std::string resultsPath = PATH + "pea_2/results/";
     std::ofstream ofs;
     ofs.open(resultsPath + "brute_force_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
@@ -79,16 +75,16 @@ void Tester::test(std::string fileName) {
     ofs.close();
     ofs.open(resultsPath + "tabu_search_results.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    test(getTestCasesFromFile(fileName));
+    test(getTestCasesFromFile(fileName), fsm, nsm, cm, maxTime);
 }
 
-void Tester::test(std::vector<TestCase*> testCases) {
+void Tester::test(std::vector<TestCase*> testCases, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime) {
     // sorting test cases by algorithm so console output is more understandable
-    std::vector<TestCase*> bruteForceTestCases = sort(testCases, 0);
-    std::vector<TestCase*> dynamicTestCases = sort(testCases, 1);
-    std::vector<TestCase*> branchAndBoundTestCases = sort(testCases, 2);
-    std::vector<TestCase*> simulatedAnnealingTestCases = sort(testCases, 3);
-    std::vector<TestCase*> tabuSearchTestCases = sort(testCases, 4);
+    std::vector<TestCase*> bruteForceTestCases = sort(testCases, static_cast<algorithmEnum>(0));
+    std::vector<TestCase*> dynamicTestCases = sort(testCases, static_cast<algorithmEnum>(1));
+    std::vector<TestCase*> branchAndBoundTestCases = sort(testCases, static_cast<algorithmEnum>(2));
+    std::vector<TestCase*> simulatedAnnealingTestCases = sort(testCases, static_cast<algorithmEnum>(3));
+    std::vector<TestCase*> tabuSearchTestCases = sort(testCases, static_cast<algorithmEnum>(4));
     // running tests
     for (TestCase* testCase : bruteForceTestCases)
         test(testCase);
@@ -97,13 +93,13 @@ void Tester::test(std::vector<TestCase*> testCases) {
     for (TestCase* testCase : branchAndBoundTestCases)
         test(testCase);
     for (TestCase* testCase : simulatedAnnealingTestCases)
-        test(testCase);
+        test(testCase, fsm, nsm, cm, maxTime);
     for (TestCase* testCase : tabuSearchTestCases)
-        test(testCase);
+        test(testCase, fsm, nsm, cm, maxTime);
 }
 
 void Tester::test(TestCase* testCase){
-    std::string resultsPath = PATH + "PEA_etap_1/results/";
+    std::string resultsPath = PATH + "pea_2/results/";
     std::vector<float> timeResults;
     // if test case includes file name
     Graph* graph;
@@ -113,8 +109,8 @@ void Tester::test(TestCase* testCase){
     else
         graph = new Graph(testCase->getSize(), testCase->getSize() * 10, false);
     switch (testCase->getAlgorithm()) {
-    
-    // brute force
+
+        // brute force
     case 0: {
         auto solver = new BruteForceSolver(graph);
         for (int i = 0; i < testCase->getHowManyTests(); i++) {
@@ -128,8 +124,8 @@ void Tester::test(TestCase* testCase){
         delete solver;
     }
           break;
-    
-    // dynamic
+
+          // dynamic
     case 1: {
         auto solver = new DynamicSolver(graph);
         for (int i = 0; i < testCase->getHowManyTests(); i++) {
@@ -143,8 +139,8 @@ void Tester::test(TestCase* testCase){
         delete solver;
     }
           break;
-    
-    // branch and bound
+
+          // branch and bound
     case 2: {
         auto solver = new BranchAndBoundSolver(graph);
         for (int i = 0; i < testCase->getHowManyTests(); i++) {
@@ -158,12 +154,26 @@ void Tester::test(TestCase* testCase){
         delete solver;
     }
           break;
-    
-    // simulated annealing
+    }
+}
+
+void Tester::test(TestCase* testCase, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime) {
+    std::string resultsPath = PATH + "pea_2/results/";
+    std::vector<float> timeResults;
+    // if test case includes file name
+    Graph* graph;
+    if (testCase->getIsFromFile())
+        graph = new Graph(testCase->getFileName());
+    // if test case doesnt include file name
+    else
+        graph = new Graph(testCase->getSize(), testCase->getSize() * 10, false);
+    switch (testCase->getAlgorithm()) {
+          // simulated annealing
     case 3: {
         auto solver = new SimulatedAnnealingSolver(graph);
         for (int i = 0; i < testCase->getHowManyTests(); i++) {
-            solver->solve();
+            solver->setParams(fsm, nsm, cm);
+            solver->solveWithOutput();
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
         saveResult(resultsPath + "simulated_annealing_results.txt", testCase->getFileName() +
@@ -173,11 +183,12 @@ void Tester::test(TestCase* testCase){
     }
           break;
 
-    // tabu search
+          // tabu search
     case 4: {
         auto solver = new TabuSearchSolver(graph);
         for (int i = 0; i < testCase->getHowManyTests(); i++) {
-            solver->solve();
+            solver->setParams(nsm, fsm, maxTime);
+            solver->solveWithOutput();
             solver->getResult("tabu search");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
@@ -193,7 +204,7 @@ void Tester::test(TestCase* testCase){
     }
 }
 
-std::vector<TestCase*> Tester::sort(std::vector<TestCase*> testCases, int algorithm) {
+std::vector<TestCase*> Tester::sort(std::vector<TestCase*> testCases, algorithmEnum algorithm) {
     std::vector<TestCase*> result;
     for (TestCase* testCase : testCases)
         if (testCase->getAlgorithm() == algorithm)
@@ -213,8 +224,10 @@ std::vector<TestCase*> Tester::getTestCasesFromFile(std::string fileName) {
     int size;
     int algorithm;
     int howManyTests;
-    while (infile >> isFromFile >> _fileName >> size >> algorithm >> howManyTests)
-        result.push_back(new TestCase(isFromFile, _fileName, size, algorithm, howManyTests));
+    while (infile >> isFromFile >> _fileName >> size >> algorithm >> howManyTests) {
+        algorithmEnum algorithm_ = static_cast<algorithmEnum>(algorithm);
+        result.push_back(new TestCase(isFromFile, _fileName, size, algorithm_, howManyTests));
+    }
     return result;
 }
 

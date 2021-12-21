@@ -1,5 +1,7 @@
 #include "Graph.h"
 
+const std::string PATH = "C:/Users/kacpe/Downloads/pea_2/";
+
 Graph::Graph() {
     this->size = 10;
     this->graph = new int* [this->size];
@@ -48,7 +50,7 @@ void Graph::printGraph() {
 
 void Graph::loadGraph(const std::string& fileName) {
     std::ifstream myFile;
-    myFile.open("C:/Users/kacpe/source/repos/PEA_etap_1/data/" + fileName);
+    myFile.open(PATH + "data/" + fileName);
     if (myFile.good()) {
         std::string data;
         std::getline(myFile, data);

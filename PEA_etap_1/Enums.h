@@ -1,5 +1,13 @@
 #pragma once
 
+enum algorithmEnum {
+	BRUTE_FORCE = 0,
+	DYNAMIC = 1,
+	BRANCH_AND_BOUND = 2,
+	SIMULATED_ANNEALING = 3,
+	TABOO_SEARCH = 4
+};
+
 enum nextSolutionMethod {
 	SWAP = 0,
 	INVERT = 1,

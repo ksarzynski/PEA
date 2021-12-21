@@ -2,6 +2,7 @@
 #include "Solver.h"
 #include "Enums.h"
 #include <random>
+#include <math.h>
 
 class TabuSearchSolver :
     public Solver
@@ -12,6 +13,12 @@ public:
     void solve();
 
     void solveWithOutput();
+
+    std::vector<int> getResult(const std::string& solverType);
+
+    void setParams(nextSolutionMethod nsm, firstSolutionMethod fsm, int maxTime);
+
+    void printParams();
 
     using Solver::Solver;
 
@@ -53,8 +60,15 @@ public:
 
 private:
 
-    Solution getNextSolution(Solution bestSolution, Solution currentSolution,
-        nextSolutionMethod nsm, std::vector<Ban> bans);
+    float error;
+
+    nextSolutionMethod nsm;
+
+    firstSolutionMethod fsm;
+
+    int maxTime;
+
+    Solution getNextSolution(Solution bestSolution, Solution currentSolution, std::vector<Ban> bans);
 
     std::vector<int> getStartingSolutionGreedy();
 
