@@ -1,0 +1,82 @@
+m6.atsp size: 6
+0.006067
+m8.atsp size: 8
+0.023493
+m9.atsp size: 9
+0.016496
+m10.atsp size: 10
+0.022027
+m11.atsp size: 11
+0.019568
+m12.atsp size: 12
+0.017075
+m13.atsp size: 13
+0.023539
+m14.atsp size: 14
+0.021365
+m15.atsp size: 15
+0.030112
+m16.atsp size: 16
+0.027523
+gr17.tsp size: 17
+0.035680
+gr21.tsp size: 21
+0.038630
+gr24.tsp size: 24
+0.058637
+bayg29.tsp size: 29
+0.084383
+dantzig42.tsp size: 42
+0.120207
+gr48.tsp size: 48
+0.173398
+eil51.tsp size: 51
+0.157365
+berlin52.tsp size: 52
+0.170698
+pr76.tsp size: 76
+0.361583
+gr96.tsp size: 96
+0.576763
+eil101.tsp size: 101
+0.541823
+pr107.tsp size: 107
+0.836002
+gr120.tsp size: 120
+1.103370
+pr124.tsp size: 124
+1.116225
+bier127.tsp size: 127
+1.098329
+ch130.tsp size: 130
+1.260065
+pr136.tsp size: 136
+1.211642
+gr137.tsp size: 137
+1.293631
+pr144.tsp size: 144
+1.455355
+ch150.tsp size: 150
+1.391690
+pr152.tsp size: 152
+1.677621
+brazil58.tsp size: 58
+0.211004
+brg180.tsp size: 180
+2.262959
+d198.tsp size: 198
+2.774125
+gr202.tsp size: 202
+2.890205
+pr226.tsp size: 226
+4.205136
+gr229.tsp size: 229
+4.306666
+pr264.tsp size: 264
+5.735994
+pr299.tsp size: 299
+8.304750
+gr431.tsp size: 431
+20.715864
+pr439.tsp size: 439
+92.066643

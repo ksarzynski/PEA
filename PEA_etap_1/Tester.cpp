@@ -63,17 +63,27 @@ void Tester::testWithDataFromFiles(std::vector<std::vector<std::string>> fileNam
 }
 
 void Tester::test(std::string fileName, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime) {
-    std::string resultsPath = PATH + "pea_2/results/";
+    std::string resultsPath = PATH + "PEA_etap_1/results/";
     std::ofstream ofs;
-    ofs.open(resultsPath + "brute_force_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(resultsPath + "brute_force_results_times.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open(resultsPath + "dynamic_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(resultsPath + "dynamic_results_times.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open(resultsPath + "branch_and_bound_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(resultsPath + "branch_and_bound_results_times.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open(resultsPath + "simulated_annealing_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(resultsPath + "simulated_annealing_results_times.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    ofs.open(resultsPath + "tabu_search_results.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(resultsPath + "tabu_search_results_times.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open(resultsPath + "brute_force_results_errors.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open(resultsPath + "dynamic_results_errors.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open(resultsPath + "branch_and_bound_results_errors.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open(resultsPath + "simulated_annealing_results_errors.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    ofs.open(resultsPath + "tabu_search_results.txt_errors", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     test(getTestCasesFromFile(fileName), fsm, nsm, cm, maxTime);
 }
@@ -99,7 +109,7 @@ void Tester::test(std::vector<TestCase*> testCases, firstSolutionMethod fsm, nex
 }
 
 void Tester::test(TestCase* testCase){
-    std::string resultsPath = PATH + "pea_2/results/";
+    std::string resultsPath = PATH + "PEA_etap_1/results/";
     std::vector<float> timeResults;
     // if test case includes file name
     Graph* graph;
@@ -118,8 +128,8 @@ void Tester::test(TestCase* testCase){
             solver->getResult("brute force");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult(resultsPath + "brute_force_results.txt", testCase->getFileName() +
-            " size: " + std::to_string(testCase->getSize()), timeResults);
+        saveResult(resultsPath + "brute_force_results", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults, std::vector<float>());
         timeResults.clear();
         delete solver;
     }
@@ -133,8 +143,8 @@ void Tester::test(TestCase* testCase){
             solver->getResult("dynamic");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult(resultsPath + "dynamic_results.txt", testCase->getFileName() +
-            " size: " + std::to_string(testCase->getSize()), timeResults);
+        saveResult(resultsPath + "dynamic_results", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults, std::vector<float>());
         timeResults.clear();
         delete solver;
     }
@@ -148,8 +158,8 @@ void Tester::test(TestCase* testCase){
             solver->getResult("branch and bound");
             timeResults.push_back((float)solver->getTime() / 1000000);
         }
-        saveResult(resultsPath + "branch_and_bound_results.txt", testCase->getFileName() +
-            " size: " + std::to_string(testCase->getSize()), timeResults);
+        saveResult(resultsPath + "branch_and_bound_results", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults, std::vector<float>());
         timeResults.clear();
         delete solver;
     }
@@ -158,8 +168,9 @@ void Tester::test(TestCase* testCase){
 }
 
 void Tester::test(TestCase* testCase, firstSolutionMethod fsm, nextSolutionMethod nsm, coolingMethod cm, int maxTime) {
-    std::string resultsPath = PATH + "pea_2/results/";
+    std::string resultsPath = PATH + "PEA_etap_1/results/";
     std::vector<float> timeResults;
+    std::vector<float> errorResults;
     // if test case includes file name
     Graph* graph;
     if (testCase->getIsFromFile())
@@ -175,9 +186,10 @@ void Tester::test(TestCase* testCase, firstSolutionMethod fsm, nextSolutionMetho
             solver->setParams(fsm, nsm, cm);
             solver->solveWithOutput();
             timeResults.push_back((float)solver->getTime() / 1000000);
+            errorResults.push_back(solver->getError());
         }
-        saveResult(resultsPath + "simulated_annealing_results.txt", testCase->getFileName() +
-            " size: " + std::to_string(testCase->getSize()), timeResults);
+        saveResult(resultsPath + "simulated_annealing_results", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults, errorResults);
         timeResults.clear();
         delete solver;
     }
@@ -191,9 +203,10 @@ void Tester::test(TestCase* testCase, firstSolutionMethod fsm, nextSolutionMetho
             solver->solveWithOutput();
             solver->getResult("tabu search");
             timeResults.push_back((float)solver->getTime() / 1000000);
+            errorResults.push_back(solver->getError());
         }
-        saveResult(resultsPath + "tabu_search_results.txt", testCase->getFileName() +
-            " size: " + std::to_string(testCase->getSize()), timeResults);
+        saveResult(resultsPath + "tabu_search_results", testCase->getFileName() +
+            " size: " + std::to_string(testCase->getSize()), timeResults, errorResults);
         timeResults.clear();
         delete solver;
     }
@@ -231,11 +244,16 @@ std::vector<TestCase*> Tester::getTestCasesFromFile(std::string fileName) {
     return result;
 }
 
-void Tester::saveResult(std::string fileName, std::string instance, std::vector<float> timeResults) {
+void Tester::saveResult(std::string fileName, std::string instance, std::vector<float> timeResults, std::vector<float> errorResults) {
     std::ofstream outfile;
-    outfile.open(fileName, std::ios_base::app);
+    outfile.open(fileName + "_times.txt", std::ios_base::app);
     outfile << instance << std::endl;
     for (float result : timeResults)
+        outfile << std::fixed << result << std::endl;
+    outfile.close();
+    outfile.open(fileName + "_errors.txt", std::ios_base::app);
+    outfile << instance << std::endl;
+    for (float result : errorResults)
         outfile << std::fixed << result << std::endl;
     outfile.close();
 }

@@ -20,6 +20,8 @@ public:
 
     void printParams();
 
+    float getError() { return this->error; };
+
     using Solver::Solver;
 
     class Ban {

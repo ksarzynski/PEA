@@ -34,9 +34,9 @@ private:
 
     coolingMethod cm;
 
-    void solveWithParams(double p, double q, double endTemperature, firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice);
+    void solveWithParams(double p, double q, double endTemperature);
 
-    void solveWithParamsAndOutput(double p, double q, double endTemperature, firstSolutionMethod fsmChoice, nextSolutionMethod nsmChoice, coolingMethod cmChoice);
+    void solveWithParamsAndOutput(double p, double q, double endTemperature);
 
     std::vector<int> getStartingSolutionGreedy();
 

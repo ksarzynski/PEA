@@ -1,12 +1,14 @@
 #include "TabuSearchSolver.h"
 
 void TabuSearchSolver::solve(){
+	// init variables
 	auto startAlgorithm = std::chrono::high_resolution_clock::now();
-	// todo pass it somehow
 	int bansListSize = std::pow(this->size, 2);
 	int banDuration = std::sqrt(this->size);
 	int moves = std::log2(this->size);
+	int iterationsWithoutBetterCost = 50;
 	Solution startSolution;
+	// get starting solution using choosen algorithm
 	if (this->fsm == GREEDY)
 		startSolution.path = getStartingSolutionGreedy();
 	else
@@ -26,22 +28,26 @@ void TabuSearchSolver::solve(){
 	std::chrono::microseconds duration;
 	std::chrono::microseconds timeFound;
 	duration = std::chrono::microseconds{ 0 };
+	// main loop
 	while (!isTimeOver) {
 		iter++;
+		// get next solution using choosen algorithm
 		nextSolution = this->getNextSolution(bestSolution, currentSolution, bans);
-		for (int i = 0; i < this->size + 1; i++)
 		if (nextSolution.cost != currentSolution.cost)
 			lastChange = iter;
 		currentSolution = nextSolution;
-		if (bansListSize < bans.size()) {
+		// add cities that were used to get next solution to bans list
+		if (bansListSize > bans.size()) {
 			bans.push_back(Ban(currentSolution.startCity, banDuration));
 			bans.push_back(Ban(currentSolution.endCity, banDuration));
 		}
+		// update best solution if needed
 		if (currentSolution.cost < bestSolution.cost) {
 			bestSolution = currentSolution;
 			iterFound = iter;
 			timeFound = duration;
 		}
+		// update bans list
 		for (int i = 0; i < bans.size(); i++) {
 			bans[i].duration -= 1;
 			if (bans[i].duration == 0) {
@@ -51,7 +57,8 @@ void TabuSearchSolver::solve(){
 				bans.erase(it);
 			}
 		}
-		if (iter - lastChange > 5) {
+		// do random moves if there is too big stagnation
+		if (iter - lastChange > iterationsWithoutBetterCost) {
 			int* toChange;
 			toChange = new int[2 * moves];
 			std::vector<int> vertexes;
@@ -119,17 +126,15 @@ void TabuSearchSolver::solveWithOutput() {
 	int iterFound = 0;
 	int lastChange = 0;
 	std::chrono::microseconds duration;
-	std::chrono::microseconds timeFound;
 	duration = std::chrono::microseconds{ 0 };
 	bool print = false;
-	int costToPrint = INT_MAX;
-	int iterationToPrint = INT_MAX;
+	int iterationToPrint = 0;
 	while (!isTimeOver) {
+		iterationToPrint++;
 		iter++;
 		nextSolution = this->getNextSolution(bestSolution, currentSolution, bans);
-		for (int i = 0; i < this->size + 1; i++)
-			if (nextSolution.cost != currentSolution.cost)
-				lastChange = iter;
+		if (nextSolution.cost != currentSolution.cost)
+			lastChange = iter;
 		currentSolution = nextSolution;
 		if (bansListSize < bans.size()) {
 			bans.push_back(Ban(currentSolution.startCity, banDuration));
@@ -138,7 +143,7 @@ void TabuSearchSolver::solveWithOutput() {
 		if (currentSolution.cost < bestSolution.cost) {
 			bestSolution = currentSolution;
 			iterFound = iter;
-			timeFound = duration;
+			std::cout << iterationToPrint << " " << bestSolution.cost << " " << 100 * float(bestSolution.cost - this->predictedResult) / this->predictedResult << "%\n";
 		}
 		for (int i = 0; i < bans.size(); i++) {
 			bans[i].duration -= 1;
@@ -240,16 +245,15 @@ TabuSearchSolver::Solution TabuSearchSolver::getNextSolution(Solution bestSoluti
 				TabuSearchSolver::Solution nextSolution = currentSolution;
 				if (this->nsm == INSERT)
 					nextSolution.path = this->getNextSolutionInsert(nextSolution, i, j);
-                else if (this->nsm == SWAP)
+				else if (this->nsm == SWAP)
 					nextSolution.path = this->getNextSolutionSwap(nextSolution, i, j);
-                else
+				else
 					nextSolution.path = this->getNextSolutionInvert(nextSolution, i, j);
 				nextSolution.startCity = i;
 				nextSolution.endCity = j;
-                nextSolution.cost = this->getCost(nextSolution);
-				if (nextSolution.cost < bestSolution.cost && nextSolution.cost< bestSolutionFound.cost)
+				nextSolution.cost = this->getCost(nextSolution);
+				if (nextSolution.cost < bestSolution.cost) {
 					bestSolutionFound = nextSolution;
-				if (nextSolution.cost < bestSolutionFound.cost) {
 					bool isBanned = false;
 					for (int k = 0; k < bans.size(); k++) {
 						if (bans[k].city == i || bans[k].city == j)
@@ -258,6 +262,7 @@ TabuSearchSolver::Solution TabuSearchSolver::getNextSolution(Solution bestSoluti
 					if (!isBanned)
 						bestSolutionFound = nextSolution;
 				}
+
 			}
 		}
 	}
@@ -268,20 +273,22 @@ TabuSearchSolver::Solution TabuSearchSolver::getNextSolution(Solution bestSoluti
 }
 
 std::vector<int> TabuSearchSolver::getNextSolutionInsert(Solution solution, int i, int j) {
-    std::vector<int> result(solution.path);
+	std::vector<int> result;
+	for (int i = 0; i < solution.path.size(); i++)
+		result.push_back(solution.path[i]);
 	if (i > j) {
-        int temp = result[i];
-        for (int k = i; k > j; k--)
-            result[k] = result[k - 1];
-        result[j] = temp;
-    }
-    else {
-        int temp = result[i];
-        for (int k = i; k < j; k++)
-            result[k] = result[k + 1];
-        result[j] = temp;
-    }
-    return result;
+		int temp = result[i];
+		for (int k = i; k > j; k--)
+			result[k] = result[k - 1];
+		result[j] = temp;
+	}
+	else if (j > i) {
+		int temp = result[i];
+		for (int k = i; k < j; k++)
+			result[k] = result[k + 1];
+		result[j] = temp;
+	}
+	return result;
 }
 
 std::vector<int> TabuSearchSolver::getNextSolutionSwap(Solution solution, int i, int j) {

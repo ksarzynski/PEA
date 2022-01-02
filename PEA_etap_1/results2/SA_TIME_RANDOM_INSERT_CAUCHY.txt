@@ -1,0 +1,20 @@
+m6.atsp size: 6
+0.007745
+m8.atsp size: 8
+0.012681
+m10.atsp size: 10
+0.017756
+m12.atsp size: 12
+0.024684
+m13.atsp size: 13
+0.032422
+m15.atsp size: 15
+0.028788
+bayg29.tsp size: 29
+0.103265
+dantzig42.tsp size: 42
+0.221969
+gr48.tsp size: 48
+0.240253
+eil51.tsp size: 51
+0.324500

@@ -31,6 +31,6 @@ private:
 
     static std::vector<TestCase*> getTestCasesFromFile(std::string fileName);
 
-    static void saveResult(std::string fileName, std::string instance, std::vector<float> timeResults);
+    static void saveResult(std::string fileName, std::string instance, std::vector<float> timeResults, std::vector<float> errorResults);
 };
 
